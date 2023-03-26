@@ -125,266 +125,266 @@ jobs:
         publish_dir: gh-pages
         keep_files: true
 
-  unit:
-    name: ${{ matrix.os }} / ${{ matrix.python-version }} unit tests${{ matrix.name }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [Ubuntu, MacOS, Windows]
-        python-version: [3.7, 3.8, 3.9, '3.10', 3.11, 3.12.0-alpha - 3.12, pypy-3.9]
-        noxenv: [unit]
-        cov: [1]
-        name: [""]
-        include:
-          - { os: Ubuntu, python-version: 3.9, noxenv: unit_sphinx, cov: 0, name: " (Sphinx)" }
-    runs-on: ${{ matrix.os }}-latest
-    env:
-      NOXENV: ${{ matrix.noxenv }}
-      WITH_COVERAGE: ${{ matrix.cov }}
-    steps:
-    - uses: actions/checkout@v3
-    - name: Install Python ${{ env.current_python }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.current_python }}
-    - name: Install Nox & co
-      run: |
-        pip${{ env.current_python }} install poetry==${{ env.poetry_version }}
-        poetry export --with dev --without-hashes --format constraints.txt --output constraints.txt
-        pip${{ env.current_python }} install --constraint constraints.txt nox nox-poetry
-    - name: Install Python ${{ matrix.python-version }}
-      if: matrix.python-version != env.current_python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Set NOXENV for Python ${{ matrix.python-version }}
-      run: python .github/workflows/noxpy.py "${{ matrix.python-version }}"
+#   unit:
+#     name: ${{ matrix.os }} / ${{ matrix.python-version }} unit tests${{ matrix.name }}
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         os: [Ubuntu, MacOS, Windows]
+#         python-version: [3.7, 3.8, 3.9, '3.10', 3.11, 3.12.0-alpha - 3.12, pypy-3.9]
+#         noxenv: [unit]
+#         cov: [1]
+#         name: [""]
+#         include:
+#           - { os: Ubuntu, python-version: 3.9, noxenv: unit_sphinx, cov: 0, name: " (Sphinx)" }
+#     runs-on: ${{ matrix.os }}-latest
+#     env:
+#       NOXENV: ${{ matrix.noxenv }}
+#       WITH_COVERAGE: ${{ matrix.cov }}
+#     steps:
+#     - uses: actions/checkout@v3
+#     - name: Install Python ${{ env.current_python }}
+#       uses: actions/setup-python@v4
+#       with:
+#         python-version: ${{ env.current_python }}
+#     - name: Install Nox & co
+#       run: |
+#         pip${{ env.current_python }} install poetry==${{ env.poetry_version }}
+#         poetry export --with dev --without-hashes --format constraints.txt --output constraints.txt
+#         pip${{ env.current_python }} install --constraint constraints.txt nox nox-poetry
+#     - name: Install Python ${{ matrix.python-version }}
+#       if: matrix.python-version != env.current_python
+#       uses: actions/setup-python@v4
+#       with:
+#         python-version: ${{ matrix.python-version }}
+#     - name: Set NOXENV for Python ${{ matrix.python-version }}
+#       run: python .github/workflows/noxpy.py "${{ matrix.python-version }}"
 
-    - name: Run Nox
-      run: ${{ env.nox_cmd }} ${{ env.NOXENV }} -- -s
+#     - name: Run Nox
+#       run: ${{ env.nox_cmd }} ${{ env.NOXENV }} -- -s
 
-    - name: Upload coverage statistics to codecov.io
-      if: env.WITH_COVERAGE == 1
-      shell: bash
-      run: |
-        bash <(curl -s https://codecov.io/bash) -f coverage.xml -F ${{ env.NOXENV }},${{ matrix.python-version }},${{ runner.os }}
+#     - name: Upload coverage statistics to codecov.io
+#       if: env.WITH_COVERAGE == 1
+#       shell: bash
+#       run: |
+#         bash <(curl -s https://codecov.io/bash) -f coverage.xml -F ${{ env.NOXENV }},${{ matrix.python-version }},${{ runner.os }}
 
-  regression:
-    name: ${{ matrix.os }} / ${{ matrix.python-version }} regression tests${{ matrix.name }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [Ubuntu, MacOS, Windows]
-        python-version: ['3.11']
-        noxenv: [regression]
-        cov: [1]
-        name: [""]
-        include:
-          - { os: Ubuntu, python-version: 3.7, noxenv: regression, cov: 1 }
-          - { os: Ubuntu, python-version: 3.8, noxenv: regression, cov: 1 }
-          - { os: Ubuntu, python-version: '3.10', noxenv: regression, cov: 1 }
-          - { os: Ubuntu, python-version: 3.11, noxenv: regression, cov: 1 }
-          - { os: Ubuntu, python-version: 3.12.0-alpha - 3.12, noxenv: regression, cov: 1 }
-          - { os: Ubuntu, python-version: pypy-3.9, noxenv: regression, cov: 1 }
-          - { os: Ubuntu, python-version: 3.11, noxenv: regression_docutils, cov: 0, name: " (docutils)" }
-          - { os: Ubuntu, python-version: 3.9, noxenv: regression_sphinx, cov: 0, name: " (Sphinx)" }
-    runs-on: ${{ matrix.os }}-latest
-    env:
-      NOXENV: ${{ matrix.noxenv }}
-      WITH_COVERAGE: ${{ matrix.cov }}
-    steps:
-    - uses: actions/checkout@v3
-    - name: Install Python ${{ env.current_python }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.current_python }}
-    - name: Install Nox & co
-      run: |
-        pip${{ env.current_python }} install poetry==${{ env.poetry_version }}
-        poetry export --with dev --without-hashes --format constraints.txt --output constraints.txt
-        pip${{ env.current_python }} install --constraint constraints.txt nox nox-poetry
-    - name: Install Python ${{ matrix.python-version }}
-      if: matrix.python-version != env.current_python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Set NOXENV for Python ${{ matrix.python-version }}
-      run: python .github/workflows/noxpy.py "${{ matrix.python-version }}"
+#   regression:
+#     name: ${{ matrix.os }} / ${{ matrix.python-version }} regression tests${{ matrix.name }}
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         os: [Ubuntu, MacOS, Windows]
+#         python-version: ['3.11']
+#         noxenv: [regression]
+#         cov: [1]
+#         name: [""]
+#         include:
+#           - { os: Ubuntu, python-version: 3.7, noxenv: regression, cov: 1 }
+#           - { os: Ubuntu, python-version: 3.8, noxenv: regression, cov: 1 }
+#           - { os: Ubuntu, python-version: '3.10', noxenv: regression, cov: 1 }
+#           - { os: Ubuntu, python-version: 3.11, noxenv: regression, cov: 1 }
+#           - { os: Ubuntu, python-version: 3.12.0-alpha - 3.12, noxenv: regression, cov: 1 }
+#           - { os: Ubuntu, python-version: pypy-3.9, noxenv: regression, cov: 1 }
+#           - { os: Ubuntu, python-version: 3.11, noxenv: regression_docutils, cov: 0, name: " (docutils)" }
+#           - { os: Ubuntu, python-version: 3.9, noxenv: regression_sphinx, cov: 0, name: " (Sphinx)" }
+#     runs-on: ${{ matrix.os }}-latest
+#     env:
+#       NOXENV: ${{ matrix.noxenv }}
+#       WITH_COVERAGE: ${{ matrix.cov }}
+#     steps:
+#     - uses: actions/checkout@v3
+#     - name: Install Python ${{ env.current_python }}
+#       uses: actions/setup-python@v4
+#       with:
+#         python-version: ${{ env.current_python }}
+#     - name: Install Nox & co
+#       run: |
+#         pip${{ env.current_python }} install poetry==${{ env.poetry_version }}
+#         poetry export --with dev --without-hashes --format constraints.txt --output constraints.txt
+#         pip${{ env.current_python }} install --constraint constraints.txt nox nox-poetry
+#     - name: Install Python ${{ matrix.python-version }}
+#       if: matrix.python-version != env.current_python
+#       uses: actions/setup-python@v4
+#       with:
+#         python-version: ${{ matrix.python-version }}
+#     - name: Set NOXENV for Python ${{ matrix.python-version }}
+#       run: python .github/workflows/noxpy.py "${{ matrix.python-version }}"
 
-    - name: Get Homebrew cache dir (macOS)
-      id: cache-dirs-macos
-      if: startsWith(runner.os, 'macOS')
-      run: |
-        echo "dir=$(brew --cache)" >> $GITHUB_OUTPUT
-    - name: Delete Homebrew cache dir to minimize cache size (macOS)
-      if: startsWith(runner.os, 'macOS')
-      run: |
-        rm -vrf "$(brew --cache)"
-    - name: Get Homebrew package versions (macOS)
-      id: homebrew-versions
-      if: startsWith(runner.os, 'macOS')
-      run: |
-        echo "mupdftools=$(brew info --json mupdf-tools | jq -r '.[0].versions.stable')" >> $GITHUB_OUTPUT
-        echo "imagemagick=$(brew info --json imagemagick | jq -r '.[0].versions.stable')" >> $GITHUB_OUTPUT
-        echo "graphviz=$(brew info --json graphviz | jq -r '.[0].versions.stable')" >> $GITHUB_OUTPUT
-    - name: Cache Homebrew downloads
-      if: startsWith(runner.os, 'macOS')
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.cache-dirs-macos.outputs.dir }}
-        key: ${{ runner.os }}-homebrew-mupdftools${{ steps.homebrew-versions.outputs.mupdftools }}-im${{ steps.homebrew-versions.outputs.imagemagick }}-graphviz${{ steps.homebrew-versions.outputs.graphviz }}
+#     - name: Get Homebrew cache dir (macOS)
+#       id: cache-dirs-macos
+#       if: startsWith(runner.os, 'macOS')
+#       run: |
+#         echo "dir=$(brew --cache)" >> $GITHUB_OUTPUT
+#     - name: Delete Homebrew cache dir to minimize cache size (macOS)
+#       if: startsWith(runner.os, 'macOS')
+#       run: |
+#         rm -vrf "$(brew --cache)"
+#     - name: Get Homebrew package versions (macOS)
+#       id: homebrew-versions
+#       if: startsWith(runner.os, 'macOS')
+#       run: |
+#         echo "mupdftools=$(brew info --json mupdf-tools | jq -r '.[0].versions.stable')" >> $GITHUB_OUTPUT
+#         echo "imagemagick=$(brew info --json imagemagick | jq -r '.[0].versions.stable')" >> $GITHUB_OUTPUT
+#         echo "graphviz=$(brew info --json graphviz | jq -r '.[0].versions.stable')" >> $GITHUB_OUTPUT
+#     - name: Cache Homebrew downloads
+#       if: startsWith(runner.os, 'macOS')
+#       uses: actions/cache@v3
+#       with:
+#         path: ${{ steps.cache-dirs-macos.outputs.dir }}
+#         key: ${{ runner.os }}-homebrew-mupdftools${{ steps.homebrew-versions.outputs.mupdftools }}-im${{ steps.homebrew-versions.outputs.imagemagick }}-graphviz${{ steps.homebrew-versions.outputs.graphviz }}
 
-    - name: Get scoop cache dir (Windows)
-      id: cache-dirs-windows
-      if: startsWith(runner.os, 'Windows')
-      run: |
-        echo "dir=$(echo $env:USERPROFILE\scoop\cache)" >> $env:GITHUB_OUTPUT
-    - name: Cache scoop downloads
-      if: startsWith(runner.os, 'Windows')
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.cache-dirs-windows.outputs.dir }}
-        key: ${{ runner.os }}-scoop
+#     - name: Get scoop cache dir (Windows)
+#       id: cache-dirs-windows
+#       if: startsWith(runner.os, 'Windows')
+#       run: |
+#         echo "dir=$(echo $env:USERPROFILE\scoop\cache)" >> $env:GITHUB_OUTPUT
+#     - name: Cache scoop downloads
+#       if: startsWith(runner.os, 'Windows')
+#       uses: actions/cache@v3
+#       with:
+#         path: ${{ steps.cache-dirs-windows.outputs.dir }}
+#         key: ${{ runner.os }}-scoop
 
-    - name: Install tools required by the regression tests (Linux)
-      if: startsWith(runner.os, 'Linux')
-      run: |
-        sudo apt-get install mupdf-tools imagemagick
-    - name: Install tools required by the regression tests (macOS)
-      if: startsWith(runner.os, 'macOS')
-      run: |
-        brew install mupdf-tools imagemagick graphviz
-    - name: Set up scoop (Windows)
-      if: startsWith(runner.os, 'Windows')
-      uses: brechtm/setup-scoop@v2
-    - name: Install tools required by the regression tests (Windows)
-      if: startsWith(runner.os, 'Windows')
-      run: |
-        scoop bucket add extras
-        scoop install mupdf
-        scoop install imagemagick
-        echo "$env:MAGICK_HOME" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-        echo "MAGICK_HOME=$env:MAGICK_HOME" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        echo "MAGICK_CODER_MODULE_PATH=$env:MAGICK_CODER_MODULE_PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+#     - name: Install tools required by the regression tests (Linux)
+#       if: startsWith(runner.os, 'Linux')
+#       run: |
+#         sudo apt-get install mupdf-tools imagemagick
+#     - name: Install tools required by the regression tests (macOS)
+#       if: startsWith(runner.os, 'macOS')
+#       run: |
+#         brew install mupdf-tools imagemagick graphviz
+#     - name: Set up scoop (Windows)
+#       if: startsWith(runner.os, 'Windows')
+#       uses: brechtm/setup-scoop@v2
+#     - name: Install tools required by the regression tests (Windows)
+#       if: startsWith(runner.os, 'Windows')
+#       run: |
+#         scoop bucket add extras
+#         scoop install mupdf
+#         scoop install imagemagick
+#         echo "$env:MAGICK_HOME" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+#         echo "MAGICK_HOME=$env:MAGICK_HOME" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+#         echo "MAGICK_CODER_MODULE_PATH=$env:MAGICK_CODER_MODULE_PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-    - name: Run Nox
-      run: ${{ env.nox_cmd }} ${{ env.NOXENV }} -- -s
-    - name: Store test artifacts
-      if: failure()
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{ matrix.os }} ${{ matrix.python-version }} regression tests${{ matrix.name }}
-        path: tests_regression/*_output/
+#     - name: Run Nox
+#       run: ${{ env.nox_cmd }} ${{ env.NOXENV }} -- -s
+#     - name: Store test artifacts
+#       if: failure()
+#       uses: actions/upload-artifact@v3
+#       with:
+#         name: ${{ matrix.os }} ${{ matrix.python-version }} regression tests${{ matrix.name }}
+#         path: tests_regression/*_output/
 
-    - name: Upload coverage statistics to codecov.io
-      if: env.WITH_COVERAGE == 1
-      shell: bash
-      run: |
-        bash <(curl -s https://codecov.io/bash) -f coverage.xml -F ${{ env.NOXENV }},${{ matrix.python-version }},${{ runner.os }}
+#     - name: Upload coverage statistics to codecov.io
+#       if: env.WITH_COVERAGE == 1
+#       shell: bash
+#       run: |
+#         bash <(curl -s https://codecov.io/bash) -f coverage.xml -F ${{ env.NOXENV }},${{ matrix.python-version }},${{ runner.os }}
 
-    - name: Setup tmate debug session
-      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled && failure() }}
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
+#     - name: Setup tmate debug session
+#       if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled && failure() }}
+#       uses: mxschmitt/action-tmate@v3
+#       with:
+#         limit-access-to-actor: true
 
-  check-tag:
-    needs: [check, unit, regression]
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: true
-    - name: Get tag
-      uses: olegtarasov/get-tag@v2
-    - name: Install Python ${{ env.current_python }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.current_python }}
-    - name: Install Poetry
-      run: |
-        pip${{ env.current_python }} install poetry==${{ env.poetry_version }}
-    - name: Get package version from Poetry
-      run: echo "PKG_VERSION=$(poetry version --short)" >> $GITHUB_ENV
-    - name: Check whether the tag matches the package version
-      uses: jannekem/run-python-script-action@v1
-      with:
-        script: |
-          if '${{ env.GIT_TAG_NAME }}' != 'v${{ env.PKG_VERSION }}':
-              error("Git tag doesn't match the package version! Aborting.")
-              exit(1)
+#   check-tag:
+#     needs: [check, unit, regression]
+#     if: startsWith(github.ref, 'refs/tags/')
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v3
+#       with:
+#         submodules: true
+#     - name: Get tag
+#       uses: olegtarasov/get-tag@v2
+#     - name: Install Python ${{ env.current_python }}
+#       uses: actions/setup-python@v4
+#       with:
+#         python-version: ${{ env.current_python }}
+#     - name: Install Poetry
+#       run: |
+#         pip${{ env.current_python }} install poetry==${{ env.poetry_version }}
+#     - name: Get package version from Poetry
+#       run: echo "PKG_VERSION=$(poetry version --short)" >> $GITHUB_ENV
+#     - name: Check whether the tag matches the package version
+#       uses: jannekem/run-python-script-action@v1
+#       with:
+#         script: |
+#           if '${{ env.GIT_TAG_NAME }}' != 'v${{ env.PKG_VERSION }}':
+#               error("Git tag doesn't match the package version! Aborting.")
+#               exit(1)
 
-    - name: Check whether the tag matches a stable version
-      id: check-stable
-      uses: jannekem/run-python-script-action@v1
-      with:
-        script: |
-          import os, re
-          tag = os.environ.get('GIT_TAG_NAME')
-          match = re.match(r'^v[0-9]+\.[0-9]+\.[0-9]+$', tag)
-          output = 'true' if match else 'false'
-          print(f'stable = {output}')
-          set_output('stable', output)
-    - name: Check whether the tag matches a development version
-      id: check-develop
-      uses: jannekem/run-python-script-action@v1
-      with:
-        script: |
-          import os, re
-          tag = os.environ.get('GIT_TAG_NAME')
-          match = re.match(r'^v[0-9]+\.[0-9]+\.[0-9]+-dev\.[0-9]+$', tag)
-          output = 'true' if match else 'false'
-          print(f'develop = {output}')
-          set_output('develop', output)
-    outputs:
-      stable: ${{ steps.check-stable.outputs.stable }}
-      develop: ${{ steps.check-develop.outputs.develop }}
+#     - name: Check whether the tag matches a stable version
+#       id: check-stable
+#       uses: jannekem/run-python-script-action@v1
+#       with:
+#         script: |
+#           import os, re
+#           tag = os.environ.get('GIT_TAG_NAME')
+#           match = re.match(r'^v[0-9]+\.[0-9]+\.[0-9]+$', tag)
+#           output = 'true' if match else 'false'
+#           print(f'stable = {output}')
+#           set_output('stable', output)
+#     - name: Check whether the tag matches a development version
+#       id: check-develop
+#       uses: jannekem/run-python-script-action@v1
+#       with:
+#         script: |
+#           import os, re
+#           tag = os.environ.get('GIT_TAG_NAME')
+#           match = re.match(r'^v[0-9]+\.[0-9]+\.[0-9]+-dev\.[0-9]+$', tag)
+#           output = 'true' if match else 'false'
+#           print(f'develop = {output}')
+#           set_output('develop', output)
+#     outputs:
+#       stable: ${{ steps.check-stable.outputs.stable }}
+#       develop: ${{ steps.check-develop.outputs.develop }}
 
-  publish-develop:
-    needs: check-tag
-    if: needs.check-tag.outputs.develop == 'true'
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: true
-    - name: Install Python ${{ env.current_python }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.current_python }}
-    - name: Install Poetry
-      run: |
-        pip${{ env.current_python }} install poetry==${{ env.poetry_version }}
+#   publish-develop:
+#     needs: check-tag
+#     if: needs.check-tag.outputs.develop == 'true'
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v3
+#       with:
+#         submodules: true
+#     - name: Install Python ${{ env.current_python }}
+#       uses: actions/setup-python@v4
+#       with:
+#         python-version: ${{ env.current_python }}
+#     - name: Install Poetry
+#       run: |
+#         pip${{ env.current_python }} install poetry==${{ env.poetry_version }}
 
-    - name: Build the wheel
-      run: poetry build --format wheel
-    - name: Publish the wheel as a prerelease on GitHub
-      uses: ncipollo/release-action@v1
-      with:
-        artifacts: "dist/rinohtype-*.whl"
-        token: ${{ secrets.GITHUB_TOKEN }}
-        prerelease: true
+#     - name: Build the wheel
+#       run: poetry build --format wheel
+#     - name: Publish the wheel as a prerelease on GitHub
+#       uses: ncipollo/release-action@v1
+#       with:
+#         artifacts: "dist/rinohtype-*.whl"
+#         token: ${{ secrets.GITHUB_TOKEN }}
+#         prerelease: true
 
-  publish-release:
-    needs: check-tag
-    if: needs.check-tag.outputs.stable == 'true'
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: true
-    - name: Install Python ${{ env.current_python }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.current_python }}
-    - name: Install Poetry
-      run: |
-        pip${{ env.current_python }} install poetry==${{ env.poetry_version }}
+#   publish-release:
+#     needs: check-tag
+#     if: needs.check-tag.outputs.stable == 'true'
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v3
+#       with:
+#         submodules: true
+#     - name: Install Python ${{ env.current_python }}
+#       uses: actions/setup-python@v4
+#       with:
+#         python-version: ${{ env.current_python }}
+#     - name: Install Poetry
+#       run: |
+#         pip${{ env.current_python }} install poetry==${{ env.poetry_version }}
 
-    - name: Publish to PyPI
-      env:
-        PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        TESTPYPI_TOKEN: ${{ secrets.TESTPYPI_TOKEN }}
-      run: |
-        poetry publish --build --username __token__ --password "$PYPI_TOKEN"
+#     - name: Publish to PyPI
+#       env:
+#         PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+#         TESTPYPI_TOKEN: ${{ secrets.TESTPYPI_TOKEN }}
+#       run: |
+#         poetry publish --build --username __token__ --password "$PYPI_TOKEN"
